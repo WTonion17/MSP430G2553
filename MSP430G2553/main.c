@@ -10,7 +10,7 @@
 int milisecond;
 int distance;
 int sensor;
-
+rere
 bool trangthairem = false;
 bool digital = false;
 
