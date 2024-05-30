@@ -7,7 +7,7 @@
 #define TRIG BIT0                               //P1.0
 #define ECHO BIT1                               //P1.1
 
-#define IN1 BIT3                                //P1.2
+#define IN1 BIT3                                //P1.3
 
 #define MOTOR_FORWARD BIT0                      //P2.0
 #define MOTOR_REVERSE BIT1                      //P2.1
@@ -24,9 +24,6 @@ unsigned int Maxdistance = 205;
 
 enum MotorState { STOPPED, FORWARD, REVERSE };
 volatile enum MotorState motorState = STOPPED;
-
-bool trangthairem = false;
-bool digital = false;
 
 unsigned char customChar[8] = {
   0x00,
@@ -110,18 +107,17 @@ unsigned int getDistance() {
     while (P1IN & ECHO);                    // Wait for ECHO_PIN to go lo
     TA0CTL &= ~MC_2;                        // Stop timer
     duration = TA0R;                        // Read timer value
-  
     distance = (duration /58);
     Maindistance = Maxdistance - distance;
     return Maindistance;
 }
 
-void controlMotol(){
+void controlMotor(){
     unsigned int distance = getDistance();
 
     LCD_SetCursor(0,0);                      //set vi tri lcd(cot, hang)
     LCD_Print("Distance: ");                 //in chuoi ra mang hinh
-    lcd_put_num(distance,0,0);
+    lcd_put_num(Maindistance,0,0);
     LCD_Print("cm ");
 
       // Điều khiển động cơ bơm nước
@@ -174,7 +170,9 @@ void main(void){
     DCOCTL = CALDCO_1MHZ;
     TA0CCR0 = 0;                              // Initialize CCR0
     TA0CTL = TASSEL_2 + MC_0;                 // SMCLK, Stop mode
+
     setup();
+
     LCD_Init(0X27, 4, 20);                    //khoi tao LCD voi giao thuc i2c
     LCD_backlightOn();                        //cho phep bat den nen
     LCD_Clear();                              //clear mang hinh de xoa ky tu vo dinh
